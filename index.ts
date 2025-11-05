@@ -2,7 +2,9 @@ import express, { Express, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import authRoutes from './routes/auth.routes'; // <-- 1. IMPORTADO
+import authRoutes from './routes/auth.routes'; // <-- IMPORTA LAS RUTAS DE AUTENTICACIÓN
+import libroRoutes from './routes/libros.routes'; // <-- IMPORTA LAS RUTAS DE LIBROS
+import prestamoRoutes from './routes/prestamos.routes'; // <-- IMPORTA LAS RUTAS DE PRÉSTAMOS
 
 dotenv.config();
 
@@ -29,7 +31,10 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // --- RUTAS DE LA API ---
-app.use('/api/auth', authRoutes); // <-- 2. AÑADIDO
+app.use('/api/auth', authRoutes); // <-- 1. USA LAS RUTAS DE AUTENTICACIÓN
+app.use('/api/libros', libroRoutes); // <-- 2. USA LAS RUTAS DE LIBROS
+app.use('/api/prestamos', prestamoRoutes); // <-- 3. USA LAS RUTAS DE PRÉSTAMOS
+
 
 app.listen(port, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
