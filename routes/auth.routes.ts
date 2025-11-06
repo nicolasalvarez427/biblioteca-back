@@ -33,7 +33,7 @@ router.post('/register', async (req: Request, res: Response) => {
       firstName,      // <-- Guardamos nombre
       lastName,       // <-- Guardamos apellido
       password: hashedPassword,
-      role: role || 'Estudiante' // Si no viene rol, usamos 'Estudiante' por defecto
+      role: 'Estudiante' // Forzamos el rol, ignorando lo que envíen desde fuera
     });
 
     // 6. Guardar en MongoDB
