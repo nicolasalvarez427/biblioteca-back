@@ -1,14 +1,21 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 
-// Definimos la interfaz para TypeScript
+// 1. Definimos la interfaz para TypeScript (para que el editor nos ayude)
 export interface IUsuario extends Document {
   username: string;
-  password?: string; // El '?' lo hace opcional (útil para no devolverlo en las peticiones)
+  email: string;        // <-- Nuevo campo
+  firstName: string;    // <-- Nuevo campo
+  lastName: string;     // <-- Nuevo campo
+  password?: string;
   role: 'Administrador' | 'Estudiante';
 }
 
+// 2. Definimos el Esquema de Mongoose (para la base de datos)
 const UsuarioSchema = new Schema<IUsuario>({
-  username: { type: String, required: true, unique: true },
+  username: { type: String, required: true, unique: true, trim: true },
+  email: { type: String, required: true, unique: true, trim: true, lowercase: true }, // <-- Email único y requerido
+  firstName: { type: String, required: true, trim: true },
+  lastName: { type: String, required: true, trim: true },
   password: { type: String, required: true },
   role: {
     type: String,
@@ -16,6 +23,8 @@ const UsuarioSchema = new Schema<IUsuario>({
     enum: ['Administrador', 'Estudiante'],
     default: 'Estudiante'
   }
+}, {
+  timestamps: true // <-- Opcional: agrega automáticamente campos createdAt y updatedAt
 });
 
 export default model<IUsuario>('Usuario', UsuarioSchema);

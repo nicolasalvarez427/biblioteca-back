@@ -1,12 +1,12 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Document, Types } from 'mongoose'; // <-- AGREGADO: Document, Types
 import { ILibro } from './Libro';
 import { IUsuario } from './Usuario';
 
 export interface IPrestamo extends Document {
-  libro: ILibro['_id']; // Guarda la referencia al ID del Libro
-  usuario: IUsuario['_id']; // Guarda la referencia al ID del Usuario
+  libro: Types.ObjectId;   // <-- CAMBIO: Usar Types.ObjectId es más directo
+  usuario: Types.ObjectId; // <-- CAMBIO: Usar Types.ObjectId es más directo
   fechaPrestamo: Date;
-  fechaDevolucion?: Date; // Opcional: la fecha límite
+  fechaDevolucion?: Date;
   devuelto: boolean;
 }
 
