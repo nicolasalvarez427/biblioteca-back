@@ -1,3 +1,10 @@
+import express, { Request, Response, Router } from 'express';
+import { verificarToken, AuthRequest } from '../middleware/auth.middleware';
+import { Libro } from '../models/Libro';
+import { Prestamo } from '../models/Prestamo';
+
+const router = Router();
+
 // --- RUTA PARA ESTUDIANTES: SOLICITAR PRÉSTAMO ---
 router.post('/solicitar/:libroId', [verificarToken], async (req: AuthRequest, res: Response) => {
   try {
@@ -12,13 +19,17 @@ router.post('/solicitar/:libroId', [verificarToken], async (req: AuthRequest, re
       return res.status(400).json({ message: 'Libro no disponible para préstamo.' });
     }
 
-    // 2. Verificar si ya lo tiene prestado (Opcional pero recomendado para evitar duplicados activos)
-    const prestamoActivo = await Prestamo.findOne({ libro: libroId, usuario: usuarioId, devuelto: false });
+    // 2. Verificar si ya lo tiene prestado
+    const prestamoActivo = await Prestamo.findOne({
+      libro: libroId,
+      usuario: usuarioId,
+      devuelto: false
+    });
     if (prestamoActivo) {
       return res.status(400).json({ message: 'Ya tienes una copia activa de este libro.' });
     }
 
-    // 3. Crear Préstamo (7 días de plazo como solicitaste antes)
+    // 3. Crear préstamo
     const fechaDevolucion = new Date();
     fechaDevolucion.setDate(fechaDevolucion.getDate() + 7);
 
@@ -29,15 +40,16 @@ router.post('/solicitar/:libroId', [verificarToken], async (req: AuthRequest, re
     });
     await nuevoPrestamo.save();
 
-    // 4. Actualizar Stock del Libro
+    // 4. Actualizar stock
     libro.stock -= 1;
     if (libro.stock === 0) libro.disponible = false;
     await libro.save();
 
     res.status(201).json({ message: 'Préstamo exitoso', prestamo: nuevoPrestamo });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error al procesar el préstamo' });
   }
 });
+
+export default router;

@@ -1,13 +1,12 @@
-import { Router, Request, Response } from 'express';
-import Libro from '../models/Libro';
+import express, { Request, Response, Router } from 'express';
 import { verificarToken, esAdmin, AuthRequest } from '../middleware/auth.middleware';
+import { Libro } from '../models/Libro'; // ✅ Import corregido
 
 const router = Router();
 
 // --- RUTAS PÚBLICAS (Para todos los usuarios) ---
 
-// GET (Leer) - Obtener todos los libros
-// (Pública - Estudiantes y Admin pueden verlos)
+// 📘 GET - Obtener todos los libros
 router.get('/', async (req: Request, res: Response) => {
   try {
     const libros = await Libro.find();
@@ -17,8 +16,7 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// GET (Leer) - Obtener un libro por ID
-// (Pública - Estudiantes y Admin pueden verlo)
+// 📗 GET - Obtener un libro por ID
 router.get('/:id', async (req: Request, res: Response) => {
   try {
     const libro = await Libro.findById(req.params.id);
@@ -31,11 +29,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-
-// --- RUTAS PRIVADAS (Solo para Administradores) ---
-// Usamos los middlewares 'verificarToken' y 'esAdmin'
-
-// POST (Crear) - Añadir un nuevo libro
+// --- RUTAS PRIVADAS (Solo Administradores) ---
 router.post('/', [verificarToken, esAdmin], async (req: AuthRequest, res: Response) => {
   try {
     const { titulo, autor, isbn } = req.body;
@@ -47,7 +41,7 @@ router.post('/', [verificarToken, esAdmin], async (req: AuthRequest, res: Respon
   }
 });
 
-// PUT (Actualizar) - Modificar un libro por ID
+// ✏️ PUT - Actualizar un libro
 router.put('/:id', [verificarToken, esAdmin], async (req: Request, res: Response) => {
   try {
     const libroActualizado = await Libro.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -60,7 +54,7 @@ router.put('/:id', [verificarToken, esAdmin], async (req: Request, res: Response
   }
 });
 
-// DELETE (Borrar) - Eliminar un libro por ID
+// ❌ DELETE - Eliminar un libro
 router.delete('/:id', [verificarToken, esAdmin], async (req: Request, res: Response) => {
   try {
     const libroEliminado = await Libro.findByIdAndDelete(req.params.id);
