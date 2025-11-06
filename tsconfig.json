@@ -1,17 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES2020",                // Compila a una versión moderna de JS
-    "module": "CommonJS",             // ¡La opción MÁS IMPORTANTE! Le dice a TS que use 'require'
-    "moduleResolution": "node",       // Cómo resuelve los 'imports'
-    "outDir": "./dist",               // Dónde pondría los archivos compilados (para producción)
-    "rootDir": "./",                  // Dónde está tu código fuente
-    "strict": true,                   // Activa todas las reglas estrictas
-    "esModuleInterop": true,          // Permite 'import express from express'
-    "skipLibCheck": true,             // Omite la revisión de tipos en 'node_modules'
-    "forceConsistentCasingInFileNames": true
+    "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist",
+    "rootDir": "./",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
   },
-  "include": [
-    "index.ts", // Incluye tu archivo principal
-    "models/**/*.ts" // Incluirá tus modelos cuando los creemos
-  ]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
