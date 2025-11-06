@@ -5,7 +5,8 @@ export interface ILibro extends Document {
   autor: string;
   isbn?: string;
   disponible: boolean;
-  imagenUrl?: string; // <-- Nuevo campo en el backend
+  imagenUrl?: string;
+  stock: number; // <-- Nuevo campo en la interfaz
 }
 
 const LibroSchema = new Schema<ILibro>({
@@ -13,7 +14,9 @@ const LibroSchema = new Schema<ILibro>({
   autor: { type: String, required: true },
   isbn: { type: String, unique: true, sparse: true },
   disponible: { type: Boolean, default: true },
-  imagenUrl: { type: String } // <-- Nuevo campo
+  imagenUrl: { type: String },
+  // Agregamos 'stock' con un valor por defecto de 1
+  stock: { type: Number, default: 1, min: 0 } // <-- Nuevo campo en el esquema
 });
 
 export default model<ILibro>('Libro', LibroSchema);
