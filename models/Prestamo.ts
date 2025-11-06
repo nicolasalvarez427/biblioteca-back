@@ -1,12 +1,11 @@
-import { Schema, model, Document, Types } from 'mongoose'; // <-- AGREGADO: Document, Types
-import { ILibro } from './Libro';
-import { IUsuario } from './Usuario';
+import { Schema, model, Document, Types } from 'mongoose';
 
 export interface IPrestamo extends Document {
-  libro: Types.ObjectId;   // <-- CAMBIO: Usar Types.ObjectId es más directo
-  usuario: Types.ObjectId; // <-- CAMBIO: Usar Types.ObjectId es más directo
+  libro: Types.ObjectId;
+  usuario: Types.ObjectId;
   fechaPrestamo: Date;
-  fechaDevolucion?: Date;
+  fechaDevolucion: Date;     // Fecha límite prevista (deadline)
+  fechaRetornoReal?: Date;   // <-- NUEVO: Fecha real cuando el usuario lo devuelve
   devuelto: boolean;
 }
 
@@ -14,7 +13,8 @@ const PrestamoSchema = new Schema<IPrestamo>({
   libro: { type: Schema.Types.ObjectId, ref: 'Libro', required: true },
   usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },
   fechaPrestamo: { type: Date, default: Date.now },
-  fechaDevolucion: { type: Date },
+  fechaDevolucion: { type: Date, required: true },
+  fechaRetornoReal: { type: Date }, // <-- Nuevo campo opcional
   devuelto: { type: Boolean, default: false }
 });
 
