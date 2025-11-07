@@ -29,8 +29,8 @@ router.get('/', [verificarToken, esAdmin], async (req: AuthRequest, res: Respons
             },
             // Descomponemos el array 'libroInfo' para que sea un objeto
             { $unwind: '$libroInfo' },
-            // Solo nos interesa el título del libro para esta vista
-            { $project: { _id: 0, titulo: '$libroInfo.titulo' } }
+            // --- CAMBIO AQUÍ: Proyectamos el ID del préstamo Y el título ---
+            { $project: { _id: 1, titulo: '$libroInfo.titulo' } }
           ],
           as: 'librosPrestados' // El resultado se guardará en este nuevo campo
         }
@@ -41,14 +41,8 @@ router.get('/', [verificarToken, esAdmin], async (req: AuthRequest, res: Respons
           username: 1,
           email: 1,
           role: 1,
-          // Mapeamos el array para que sea solo un array de strings (títulos)
-          librosPrestados: {
-            $map: {
-              input: "$librosPrestados",
-              as: "lp",
-              in: "$$lp.titulo"
-            }
-          }
+          // --- CAMBIO AQUÍ: Ya no mapeamos, 'librosPrestados' es ahora un array de objetos ---
+          librosPrestados: 1
         }
       }
     ]);
@@ -62,7 +56,7 @@ router.get('/', [verificarToken, esAdmin], async (req: AuthRequest, res: Respons
 
 // ... (Mantenemos la ruta DELETE igual que antes)
 router.delete('/:id', [verificarToken, esAdmin], async (req: AuthRequest, res: Response) => {
-    // ... (mismo código de eliminación que te pasé antes)
+    // ... (mismo código de eliminación)
     try {
         const { id } = req.params;
         if (req.usuario?.id === id) {

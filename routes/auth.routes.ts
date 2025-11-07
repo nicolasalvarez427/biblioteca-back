@@ -54,10 +54,11 @@ router.post('/register', async (req: Request, res: Response) => {
 // --- RUTA DE LOGIN (POST /api/auth/login) ---
 router.post('/login', async (req: Request, res: Response) => {
   try {
-    const { username, password } = req.body;
+    // --- CAMBIO 1: Recibimos 'email' en lugar de 'username' ---
+    const { email, password } = req.body;
 
-    // 1. Buscar al usuario
-    const usuario = await Usuario.findOne({ username });
+    // --- CAMBIO 2: Buscamos al usuario por su email ---
+    const usuario = await Usuario.findOne({ email });
     if (!usuario) {
       return res.status(400).json({ message: 'Credenciales incorrectas' });
     }
@@ -86,7 +87,7 @@ router.post('/login', async (req: Request, res: Response) => {
       token,
       usuario: {
         id: usuario._id,
-        username: usuario.username,
+        username: usuario.username, // Seguimos enviando el username para mostrarlo
         role: usuario.role
       }
     });
