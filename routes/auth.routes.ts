@@ -12,7 +12,7 @@ router.post('/register', async (req: Request, res: Response) => {
 
     // 2. Validaciones básicas (opcional pero recomendado)
     if (!username || !password || !email || !firstName || !lastName) {
-       return res.status(400).json({ message: 'Faltan datos obligatorios.' });
+      return res.status(400).json({ message: 'Faltan datos obligatorios.' });
     }
 
     // 3. Verificar si el usuario O el email ya existen
@@ -39,8 +39,8 @@ router.post('/register', async (req: Request, res: Response) => {
     // 6. Guardar en MongoDB
     const usuarioGuardado = await nuevoUsuario.save();
 
-    res.status(201).json({ 
-      message: 'Usuario registrado exitosamente', 
+    res.status(201).json({
+      message: 'Usuario registrado exitosamente',
       userId: usuarioGuardado._id,
       username: usuarioGuardado.username // Devolvemos el username confirmado
     });
@@ -79,9 +79,7 @@ router.post('/login', async (req: Request, res: Response) => {
       throw new Error('JWT_SECRET no está definida');
     }
 
-    const token = jwt.sign(payload, secret, {
-      expiresIn: '1h' // El token expira en 1 hora
-    });
+    const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1h' });
 
     // 4. Enviar el token y los datos del usuario al frontend
     res.json({

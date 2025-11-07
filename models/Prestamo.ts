@@ -5,7 +5,7 @@ export interface IPrestamo extends Document {
   usuario: mongoose.Types.ObjectId;
   fechaPrestamo: Date;
   fechaDevolucion: Date;
-  fechaDevuelto?: Date;
+  fechaRetornoReal?: Date;
   devuelto: boolean;
 }
 
@@ -14,7 +14,7 @@ const PrestamoSchema = new Schema<IPrestamo>({
   usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },
   fechaPrestamo: { type: Date, default: Date.now },
   fechaDevolucion: { type: Date, required: true },
-  fechaDevuelto: { type: Date },
+  fechaRetornoReal: { type: Date },
   devuelto: { type: Boolean, default: false }
 });
 
