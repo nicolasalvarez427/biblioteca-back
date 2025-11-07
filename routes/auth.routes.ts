@@ -51,25 +51,36 @@ router.post('/register', async (req: Request, res: Response) => {
   }
 });
 
-// --- RUTA DE LOGIN (POST /api/auth/login) ---
 router.post('/login', async (req: Request, res: Response) => {
   try {
-    // --- CAMBIO 1: Recibimos 'email' en lugar de 'username' ---
     const { email, password } = req.body;
 
-    // --- CAMBIO 2: Buscamos al usuario por su email ---
+    // 1. Validaciones mínimas (Si no existe email o password)
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Faltan credenciales (email y password).' });
+    }
+
+    // 2. Buscar al usuario
     const usuario = await Usuario.findOne({ email });
     if (!usuario) {
-      return res.status(400).json({ message: 'Credenciales incorrectas' });
+      // 🟢 Mejoramos el mensaje para no dar pistas
+      return res.status(401).json({ message: 'Credenciales inválidas.' }); 
     }
 
-    // 2. Comparar la contraseña
-    const passwordCorrecta = await bcrypt.compare(password, usuario.password!);
-    if (!passwordCorrecta) {
-      return res.status(400).json({ message: 'Credenciales incorrectas' });
+    // 3. Comparar la contraseña (bcrypt.compare es ASÍNCRONO)
+    // Usaremos un try-catch anidado para asegurar la estabilidad
+    try {
+      const passwordCorrecta = await bcrypt.compare(password, usuario.password!);
+      if (!passwordCorrecta) {
+        return res.status(401).json({ message: 'Credenciales inválidas.' });
+      }
+    } catch (bcryptError) {
+        console.error("Error comparando contraseña:", bcryptError);
+        return res.status(500).json({ message: 'Error interno en autenticación.' });
     }
 
-    // 3. Si todo está bien, crear un Token (JWT)
+
+    // 4. Crear un Token (JWT)
     const payload = {
       id: usuario._id,
       role: usuario.role
@@ -77,24 +88,27 @@ router.post('/login', async (req: Request, res: Response) => {
 
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      throw new Error('JWT_SECRET no está definida');
+      // Este error ya no debería ocurrir si está en Render
+      throw new Error('JWT_SECRET no está definida'); 
     }
 
+    // Aseguramos que jwt.sign esté dentro del try principal si lanzara errores
     const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1h' });
 
-    // 4. Enviar el token y los datos del usuario al frontend
+    // 5. Enviar el token
     res.json({
       token,
       usuario: {
         id: usuario._id,
-        username: usuario.username, // Seguimos enviando el username para mostrarlo
+        username: usuario.username,
         role: usuario.role
       }
     });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error en el servidor' });
+    console.error('CRITICAL LOGIN ERROR:', error);
+    // 🟢 Esto es lo más importante: asegurar que siempre se envíe un 500 y no se cuelgue.
+    res.status(500).json({ message: 'Error en el servidor al procesar el login.' }); 
   }
 });
 
