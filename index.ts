@@ -1,10 +1,11 @@
-import express, { Express, Request, Response } from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import dotenv from 'dotenv';
+import express, { Express, Request, Response } from 'express'; 
+import mongoose from 'mongoose'; 
+import cors from 'cors'; 
+import dotenv from 'dotenv'; 
 import authRoutes from './routes/auth.routes'; // <-- IMPORTA LAS RUTAS DE AUTENTICACIÓN
 import libroRoutes from './routes/libros.routes'; // <-- IMPORTA LAS RUTAS DE LIBROS
 import prestamoRoutes from './routes/prestamos.routes'; // <-- IMPORTA LAS RUTAS DE PRÉSTAMOS
+import usuarioRoutes from './routes/usuario.routes'; // <-- IMPORTA LAS RUTAS DE USUARIOS
 
 dotenv.config();
 
@@ -34,8 +35,9 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes); // <-- 1. USA LAS RUTAS DE AUTENTICACIÓN
 app.use('/api/libros', libroRoutes); // <-- 2. USA LAS RUTAS DE LIBROS
 app.use('/api/prestamos', prestamoRoutes); // <-- 3. USA LAS RUTAS DE PRÉSTAMOS
+app.use('/api/users', usuarioRoutes); // <-- 4. USA LAS RUTAS DE USUARIOS
 
-
+// Iniciar el servidor
 app.listen(port, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
+  console.log(`🚀 Servidor corriendo en http://localhost:${port}`); 
 });
